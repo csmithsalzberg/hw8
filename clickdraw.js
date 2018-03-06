@@ -3,96 +3,86 @@
 //k3
 //2018-01-08
 
-var c = document.getElementById("slate");
-//slate is the canvas
-var ctx = c.getContext("2d");
-//create a 2d object that controls the stuff
-
-var id;
-var size;
-var increment=1;
-var x;
-var y;
+var stop = document.getElementById("s");
+var growth = document.getElementById("size");
+var dvd = document.getElementById("screensaver");
+var r = 50;
+var increment = 1;
 var dx;
 var dy;
+var x = 250;
+var y = 250;
+var animate = true;
 
-var stop = document.getElementById("s");
-var mode = document.getElementById("m");
-var dvd = document.getElementById("screensaver");
+var container = document.getElementById("vimage");
 
-/*var draw = function(){
-    ctx.beginPath();
-    ctx.clearRect(0, 0, c.width, c.height); //clears screen
-    ctx.fillStyle = "red";
-    ctx.strokeStyle="red";
-    //red
-    ctx.arc(x, y, size, 0, 2*Math.PI);
-    ctx.stroke();
-    ctx.fill();
-    if (size + increment > 0){
-	console.log("work");
-	size += increment;
-	id = window.requestAnimationFrame(draw);
-    }
-    else{
-	changeMode();
-	id = window.requestAnimationFrame(draw);
-    }
-}*/
-
-var changeMode = function(){
-    increment *= -1;
-}
-mode.addEventListener("click", changeMode);
-
-
-var stopball = function(){
+var stoprun = function(e){
     if(id){
-    window.cancelAnimationFrame(id); 
-  }
+	window.cancelAnimationFrame(id); 
+    }
+    container.innerHTML=''; //clears screen
+    animate = true;
 }
-stop.addEventListener("click", stopball);
+stop.addEventListener("click", stoprun);
 
-var onClick = function(e){
-    dx = Math.floor(Math.random()*5 + 1)
-    dy = Math.floor(Math.random()*5 + 1)
-    ctx.clearRect(0, 0, c.width, c.height); //clears screen
-    x= e.offsetX;
-    y= e.offsetY;
-    size = 50;
-    window.requestAnimationFrame(bounce);
+var circleMaker = function(){
+    if (animate){
+	circler();
+    }
 }
-c.addEventListener("click", onClick);
 
+var circler = function(){
+    animate = false;
+    if (r == 200 || r == 0){
+	    increment *= -1;
+    }
+    r += increment;
+    container.innerHTML=''; //clears screen
+    var c = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+    c.setAttribute("cx", 250);
+    c.setAttribute("cy", 250);
+    c.setAttribute("fill", "red");
+    c.setAttribute("r", r);
+    container.appendChild(c);
+    id = window.requestAnimationFrame(circler);
+};
 
 var startBounce = function(){
-    dx = Math.floor(Math.random()*5 + 1)
-    dy = Math.floor(Math.random()*5 + 1)
-    ctx.clearRect(0, 0, c.width, c.height); //clears screen
-    size = 50;
-    x=c.width/2;
-    y=c.height/2;
-    window.requestAnimationFrame(bounce);
+    if (animate){
+	dx = Math.floor(Math.random()*5 + 1)
+	dy = Math.floor(Math.random()*5 + 1)
+    	window.requestAnimationFrame(bounce);
+    }
 }
-dvd.addEventListener("click", startBounce);
+
 
 
 var bounce = function(){
-    ctx.clearRect(0, 0, c.width, c.height); //clears screen
-    ctx.beginPath();
-    ctx.fillStyle = "red";
-    ctx.strokeStyle="red";
-    ctx.arc(x, y, size, 0, 2*Math.PI);
-    ctx.stroke();
-    ctx.fill();
-    if(x+dx+size > 600 || x+dx-size < 0){
+    animate = false;
+    container.innerHTML=''; //clears screen
+    if(x+dx+200 > 500 || x+dx < 0){
 	dx*=-1;
     }
     x+=dx
-    if(y+dy+size > 600 || y+dy-size < 0){
+    if(y+dy+102 > 500 || y+dy < 0){
 	dy*=-1;
     }
     y+=dy
 
-    window.requestAnimationFrame(bounce);
+    var c = document.createElementNS("http://www.w3.org/2000/svg", "image");
+    c.setAttribute("height", 100);
+    c.setAttribute("width", 100);
+    c.setAttribute("x", x);
+    c.setAttribute("y", y);
+    c.setAttribute("href", "dvd.png");
+    c.setAttribute("height", 102);
+    c.setAttribute("width", 200);
+    container.appendChild(c);
+    
+    id = window.requestAnimationFrame(bounce);
 }
+
+stop.addEventListener("click", stoprun);
+growth.addEventListener("click", circleMaker);
+dvd.addEventListener("click", startBounce);
+
